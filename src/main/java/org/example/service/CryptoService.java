@@ -3,6 +3,7 @@ package org.example.service;
 import javax.crypto.*;
 import javax.crypto.spec.*;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Base64;
 
@@ -80,5 +81,17 @@ public class CryptoService {
 
         byte[] plaintext = cipher.doFinal(ciphertext);
         return new String(plaintext, StandardCharsets.UTF_8);
+    }
+
+    public String hashPasswordWithSalt(String password, byte[] salt) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.update(salt);
+        byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+
+        byte[] result = new byte[salt.length + hash.length];
+        System.arraycopy(salt, 0, result, 0, salt.length);
+        System.arraycopy(hash, 0, result, salt.length, hash.length);
+
+        return Base64.getEncoder().encodeToString(result);
     }
 }
