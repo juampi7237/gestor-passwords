@@ -57,6 +57,20 @@ public class PasswordStorageService {
                 .collect(Collectors.toList());
     }
 
+    public boolean deletePassword(String site, String username) throws Exception {
+        validateAuthentication();
+
+        boolean removed = passwordList.removeIf(entry ->
+                entry.getSite().equalsIgnoreCase(site) &&
+                        entry.getUsername().equalsIgnoreCase(username));
+
+        if (removed) {
+            savePasswordsToFile();
+        }
+
+        return removed;
+    }
+
 
     private void savePasswordsToFile() throws Exception {
         validateAuthentication();
