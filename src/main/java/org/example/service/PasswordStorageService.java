@@ -41,6 +41,22 @@ public class PasswordStorageService {
         savePasswordsToFile();
     }
 
+    public List<PasswordEntity> getAllPasswords() throws Exception {
+        validateAuthentication();
+        return new ArrayList<>(passwordList);
+    }
+
+    public List<PasswordEntity> searchPasswords(String searchTerm) throws Exception {
+        validateAuthentication();
+
+        String lowerSearchTerm = searchTerm.toLowerCase();
+        return passwordList.stream()
+                .filter(entry -> entry.getSite().toLowerCase().contains(lowerSearchTerm) ||
+                        entry.getUsername().toLowerCase().contains(lowerSearchTerm) ||
+                        entry.getNotes().toLowerCase().contains(lowerSearchTerm))
+                .collect(Collectors.toList());
+    }
+
 
     private void savePasswordsToFile() throws Exception {
         validateAuthentication();
