@@ -1,6 +1,7 @@
 package org.example.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class PasswordEntity {
 
@@ -116,5 +117,10 @@ public class PasswordEntity {
     private static String unescapeCsvField(String field) {
         if (field == null) return "";
         return field.replace("\\|", "|").replace("\\n", "\n").replace("\\r", "\r");
+    }
+
+    public String getFormattedCreatedAt() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return createdAt.format(formatter);
     }
 }

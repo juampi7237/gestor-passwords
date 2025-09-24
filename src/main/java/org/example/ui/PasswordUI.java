@@ -5,6 +5,7 @@ import org.example.service.AuthenticationService;
 import org.example.service.PasswordGeneratorService;
 import org.example.service.PasswordStorageService;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class PasswordUI {
@@ -37,7 +38,7 @@ public class PasswordUI {
         System.out.println();
 
         if (authService.hasMasterPassword()) {
-            System.out.println("🔑 INICIAR SESION");
+            System.out.println("INICIAR SESION");
             String password = getInput("Ingrese su password maestro: ");
 
             try {
@@ -70,7 +71,7 @@ public class PasswordUI {
         String password;
         if (generateOption.equalsIgnoreCase("s")) {
             password = passwordGenerator.generateSecurePassword(12);
-            System.out.println("🔐 Password generado: " + password);
+            System.out.println("Password generado: " + password);
         } else {
             password = getInputWithValidation("Password: ", InputValidator.Validators.notEmpty());
         }
@@ -83,6 +84,31 @@ public class PasswordUI {
             System.out.println("Password guardado exitosamente.");
         } catch (Exception e) {
             System.out.println("Error al guardar la password: " + e.getMessage());
+        }
+    }
+
+    public void listarPasswords() {
+        System.out.println("\n📋 LISTA DE PASSWORDS");
+        try {
+            List<PasswordEntity> passwords = storageService.getAllPasswords();
+            if (passwords.isEmpty()) {
+                System.out.println("📝 No hay passwords guardados.");
+                return;
+            }
+
+            for (int i = 0; i < passwords.size(); i++) {
+                PasswordEntity password = passwords.get(i);
+                System.out.printf("%d. %s\n", i + 1, password.getSite());
+                System.out.printf(" Usuario: %s\n", password.getUsername());
+                System.out.printf(" Password: %s\n", password.getPassword());
+                if (!password.getNotes().isEmpty()) {
+                    System.out.printf(" Notas: %s\n", password.getNotes());
+                }
+                System.out.printf(" Creado: %s\n", password.getFormattedCreatedAt());
+                System.out.println("-------------------------------------------");
+            }
+        } catch (Exception e) {
+            System.out.println("Error al listar passwords: " + e.getMessage());
         }
     }
 

@@ -27,7 +27,7 @@ public class MenuUI {
                     ui.savePassword();
                     break;
                 case "2":
-                    System.out.println("Listar password");
+                    ui.listarPasswords();
                     break;
                 case "3":
                     System.out.println("Buscar password");
