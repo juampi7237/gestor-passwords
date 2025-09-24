@@ -39,6 +39,7 @@ public class PasswordEntity {
 
     public void setSite(String site) {
         this.site = site;
+        updateTimestamp();
     }
 
     public String getUsername() {
@@ -47,6 +48,7 @@ public class PasswordEntity {
 
     public void setUsername(String username) {
         this.username = username;
+        updateTimestamp();
     }
 
     public String getPassword() {
@@ -55,6 +57,7 @@ public class PasswordEntity {
 
     public void setPassword(String password) {
         this.password = password;
+        updateTimestamp();
     }
 
     public String getNotes() {
@@ -62,7 +65,8 @@ public class PasswordEntity {
     }
 
     public void setNotes(String notes) {
-        this.notes = notes;
+        this.notes = notes != null ? notes : "";
+        updateTimestamp();
     }
 
     public LocalDateTime getCreatedAt() {
@@ -122,5 +126,14 @@ public class PasswordEntity {
     public String getFormattedCreatedAt() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         return createdAt.format(formatter);
+    }
+
+    public String getFormattedUpdatedAt() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        return updatedAt.format(formatter);
+    }
+
+    private void updateTimestamp() {
+        this.updatedAt = LocalDateTime.now();
     }
 }

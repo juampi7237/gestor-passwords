@@ -33,29 +33,59 @@ public class PasswordUI {
     }
 
     public boolean authenticateUser() {
-        System.out.println("AUTENTICACION REQUERIDA");
-        System.out.println("Debe configurar o ingresar el password maestro");
+        System.out.println("AUTENTICACIÓN REQUERIDA");
+        System.out.println("Para acceder al gestor, debe configurar o ingresar su password maestro.");
         System.out.println();
 
         if (authService.hasMasterPassword()) {
-            System.out.println("INICIAR SESION");
-            String password = getInput("Ingrese su password maestro: ");
+            return handleLogin();
+        } else {
+            return handleInitialSetup();
+        }
+    }
 
-            try {
-                if (authService.verifyMasterPassword(password)) {
-                    System.out.println("Autenticacion exitosa");
-                    isAuthenticated = true;
-                    return true;
-                } else {
-                    System.out.println("Password maestro incorrecto");
-                    return false;
-                }
-            } catch (Exception e) {
-                System.out.println("Error en la autenticacion: " + e.getMessage());
+    private boolean handleLogin() {
+        System.out.println("INICIAR SESIÓN");
+        String password = getInput("Ingrese su password maestro: ");
+
+        try {
+            if (authService.verifyMasterPassword(password)) {
+                System.out.println("Autenticacion exitosa.");
+                isAuthenticated = true;
+                return true;
+            } else {
+                System.out.println("Password maestro incorrecta.");
                 return false;
             }
-        } else {
-            System.out.println("ESTADO INICIAL");
+        } catch (Exception e) {
+            System.out.println("Error durante la autenticacion: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean handleInitialSetup() {
+        System.out.println("CONFIGURACION INICIAL");
+        System.out.println("No se ha configurado una password maestro");
+
+        String password = getInputWithValidation(
+                "Ingrese un nuevo password maestro (mínimo 8 caracteres): ",
+                InputValidator.Validators.minLength(8)
+        );
+
+        String confirmPassword = getInput("Confirme la password maestro: ");
+
+        if (!password.equals(confirmPassword)) {
+            System.out.println("Los passwords no coinciden");
+            return false;
+        }
+
+        try {
+            authService.setMasterPassword(password);
+            System.out.println("Password maestro configurado exitosamente");
+            isAuthenticated = true;
+            return true;
+        } catch (Exception e) {
+            System.out.println("Error al configurar el password maestro: " + e.getMessage());
             return false;
         }
     }
@@ -88,11 +118,11 @@ public class PasswordUI {
     }
 
     public void listarPasswords() {
-        System.out.println("\n📋 LISTA DE PASSWORDS");
+        System.out.println("\nLISTA DE PASSWORDS");
         try {
             List<PasswordEntity> passwords = storageService.getAllPasswords();
             if (passwords.isEmpty()) {
-                System.out.println("📝 No hay passwords guardados.");
+                System.out.println("No hay passwords guardados.");
                 return;
             }
 
@@ -185,7 +215,7 @@ public class PasswordUI {
     }
 
     public void updateMasterPassword() {
-        System.out.println("\n🔄 CAMBIAR PASSWORD MAESTRO");
+        System.out.println("\nCAMBIAR PASSWORD MAESTRO");
         String currentPassword = getInput("Ingrese la password maestro actual: ");
 
         try {
