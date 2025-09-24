@@ -33,7 +33,7 @@ public class MenuUI {
                     ui.buscarPassword();
                     break;
                 case "4":
-                    System.out.println("Eliminar password");
+                    ui.deletePassword();
                     break;
                 case "5":
                     System.out.println("Actualizar password");

@@ -142,6 +142,48 @@ public class PasswordUI {
         }
     }
 
+    public void deletePassword() {
+        System.out.println("\n🗑️ ELIMINAR CONTRASEÑA");
+
+        try {
+            List<PasswordEntity> passwords = storageService.getAllPasswords();
+            if (passwords.isEmpty()) {
+                System.out.println("No hay passwords para eliminar.");
+                return;
+            }
+
+            System.out.println("Seleccione el password a eliminar:");
+            for (int i = 0; i < passwords.size(); i++) {
+                PasswordEntity entry = passwords.get(i);
+                System.out.printf("%d. %s (%s)\n", i + 1, entry.getSite(), entry.getUsername());
+            }
+
+            String input = getInput("Numero de password a eliminar: ");
+
+            try {
+                int index = Integer.parseInt(input) - 1;
+                if (index >= 0 && index < passwords.size()) {
+                    PasswordEntity entry = passwords.get(index);
+                    System.out.printf("¿Esta seguro de eliminar el password de %s? (s/N): ", entry.getSite());
+                    String confirm = scanner.nextLine();
+
+                    if (confirm.equalsIgnoreCase("s") || confirm.equalsIgnoreCase("si")) {
+                        storageService.deletePassword(entry.getSite(), entry.getUsername());
+                        System.out.println("Password eliminado exitosamente");
+                    } else {
+                        System.out.println("Eliminacion cancelada");
+                    }
+                } else {
+                    System.out.println("Numero no valido");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Entrada no valido. Debe ser un numero");
+            }
+        } catch (Exception e) {
+            System.out.println("Error al eliminar password: " + e.getMessage());
+        }
+    }
+
     public String getInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
