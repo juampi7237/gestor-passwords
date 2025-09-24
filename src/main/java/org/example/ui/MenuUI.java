@@ -30,7 +30,7 @@ public class MenuUI {
                     ui.listarPasswords();
                     break;
                 case "3":
-                    System.out.println("Buscar password");
+                    ui.buscarPassword();
                     break;
                 case "4":
                     System.out.println("Eliminar password");

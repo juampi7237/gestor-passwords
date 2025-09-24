@@ -112,6 +112,36 @@ public class PasswordUI {
         }
     }
 
+    public void buscarPassword() {
+        System.out.println("\nBUSCAR PASSWORD");
+        String searchTerm = getInput("Ingrese el sitio/servicio a buscar: ");
+
+        try {
+            List<PasswordEntity> passwords = storageService.searchPasswords(searchTerm);
+            if (passwords.isEmpty()) {
+                System.out.println("🔍 No se encontraron passwords para: " + searchTerm);
+                return;
+            }
+
+            System.out.println("===========================================");
+            System.out.println("RESULTADOS DE BÚSQUEDA:");
+            System.out.println("===========================================");
+            for (int i = 0; i < passwords.size(); i++) {
+                PasswordEntity password = passwords.get(i);
+                System.out.printf("%d. %s\n", i + 1, password.getSite());
+                System.out.printf(" Usuario: %s\n", password.getUsername());
+                System.out.printf(" Password: %s\n", password.getPassword());
+                if (!password.getNotes().isEmpty()) {
+                    System.out.printf(" Notas: %s\n", password.getNotes());
+                }
+                System.out.printf(" Creado: %s\n", password.getFormattedCreatedAt());
+                System.out.println("-------------------------------------------");
+            }
+        } catch (Exception e) {
+            System.out.println("Error al buscar passwords: " + e.getMessage());
+        }
+    }
+
     public String getInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
