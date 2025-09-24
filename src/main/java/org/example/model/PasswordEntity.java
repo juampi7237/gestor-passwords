@@ -79,4 +79,42 @@ public class PasswordEntity {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public String toCsvString() {
+        return String.join("|",
+                escapeCsvField(site),
+                escapeCsvField(username),
+                escapeCsvField(password),
+                escapeCsvField(notes),
+                createdAt.toString(),
+                updatedAt.toString()
+        );
+    }
+
+    private String escapeCsvField(String field) {
+        if (field == null) return "";
+        return field.replace("|", "\\|").replace("\n", "\\n").replace("\r", "\\r");
+    }
+
+    public static PasswordEntity fromCsvString(String csvLine) {
+        String[] fields = csvLine.split("\\|");
+
+        if (fields.length < 6) {
+            throw new IllegalArgumentException("Formato CSV inválido");
+        }
+
+        String site = unescapeCsvField(fields[0]);
+        String username = unescapeCsvField(fields[1]);
+        String password = unescapeCsvField(fields[2]);
+        String notes = unescapeCsvField(fields[3]);
+        LocalDateTime createdAt = LocalDateTime.parse(fields[4]);
+        LocalDateTime updatedAt = LocalDateTime.parse(fields[5]);
+
+        return new PasswordEntity(site, username, password, notes, createdAt, updatedAt);
+    }
+
+    private static String unescapeCsvField(String field) {
+        if (field == null) return "";
+        return field.replace("\\|", "|").replace("\\n", "\n").replace("\\r", "\r");
+    }
 }
