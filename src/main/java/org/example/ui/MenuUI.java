@@ -24,7 +24,7 @@ public class MenuUI {
             String option = ui.getInput("Seleccione una opcion: ");
             switch (option) {
                 case "1":
-                    System.out.println("Guardar password");
+                    ui.savePassword();
                     break;
                 case "2":
                     System.out.println("Listar password");

@@ -1,5 +1,6 @@
 package org.example.ui;
 
+import org.example.model.PasswordEntity;
 import org.example.service.AuthenticationService;
 import org.example.service.PasswordGeneratorService;
 import org.example.service.PasswordStorageService;
@@ -58,6 +59,33 @@ public class PasswordUI {
         }
     }
 
+    public void savePassword() {
+        System.out.println("\n💾 GUARDAR NUEVO PASSWORD");
+        String site = getInputWithValidation("Sitio/Servicio: ", InputValidator.Validators.notEmpty());
+        String username = getInputWithValidation("Usuario: ", InputValidator.Validators.notEmpty());
+
+        System.out.print("¿Generar password automaticamente? (s/N): ");
+        String generateOption = scanner.nextLine();
+
+        String password;
+        if (generateOption.equalsIgnoreCase("s")) {
+            password = passwordGenerator.generateSecurePassword(12);
+            System.out.println("🔐 Password generado: " + password);
+        } else {
+            password = getInputWithValidation("Password: ", InputValidator.Validators.notEmpty());
+        }
+
+        String notes = getInput("Notas (opcional): ");
+
+        try {
+            PasswordEntity entry = new PasswordEntity(site, username, password, notes);
+            storageService.savePassword(entry);
+            System.out.println("Password guardado exitosamente.");
+        } catch (Exception e) {
+            System.out.println("Error al guardar la password: " + e.getMessage());
+        }
+    }
+
     public String getInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
@@ -69,5 +97,16 @@ public class PasswordUI {
 
     public void setAuthenticated(boolean authenticated) {
         isAuthenticated = authenticated;
+    }
+
+    private String getInputWithValidation(String prompt, InputValidator validator) {
+        while (true) {
+            String input = getInput(prompt);
+            String error = validator.validate(input);
+            if (error == null) {
+                return input;
+            }
+            System.out.println("❌ " + error);
+        }
     }
 }
