@@ -36,7 +36,7 @@ public class MenuUI {
                     ui.deletePassword();
                     break;
                 case "5":
-                    System.out.println("Actualizar password");
+                    ui.updateMasterPassword();
                     break;
                 case "6":
                     ui.setAuthenticated(false);

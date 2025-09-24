@@ -184,6 +184,36 @@ public class PasswordUI {
         }
     }
 
+    public void updateMasterPassword() {
+        System.out.println("\n🔄 CAMBIAR PASSWORD MAESTRO");
+        String currentPassword = getInput("Ingrese la password maestro actual: ");
+
+        try {
+            if (!authService.verifyMasterPassword(currentPassword)) {
+                System.out.println("Password maestro actual incorrecto");
+                return;
+            }
+
+            String newPassword = getInputWithValidation(
+                    "Ingrese la nuevo password maestro: ",
+                    InputValidator.Validators.minLength(8)
+            );
+
+            String confirmPassword = getInput("Confirme nuevo password maestro: ");
+
+            if (!newPassword.equals(confirmPassword)) {
+                System.out.println("Las passwords no coinciden.");
+                return;
+            }
+
+            authService.changeMasterPassword(currentPassword, newPassword);
+            System.out.println("Password maestro cambiado exitosamente");
+
+        } catch (Exception e) {
+            System.out.println("Error al cambiar password maestro: " + e.getMessage());
+        }
+    }
+
     public String getInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
