@@ -94,4 +94,23 @@ public class CryptoService {
 
         return Base64.getEncoder().encodeToString(result);
     }
+
+    public boolean verifyPasswordHash(String password, String hashedPassword) throws Exception {
+        byte[] data = Base64.getDecoder().decode(hashedPassword);
+        byte[] salt = new byte[SALT_LENGTH];
+        System.arraycopy(data, 0, salt, 0, SALT_LENGTH);
+
+        String newHash = hashPasswordWithSalt(password, salt);
+        return constantTimeEquals(hashedPassword, newHash);
+    }
+
+    private boolean constantTimeEquals(String a, String b) {
+        if (a.length() != b.length()) return false;
+
+        int result = 0;
+        for (int i = 0; i < a.length(); i++) {
+            result |= a.charAt(i) ^ b.charAt(i);
+        }
+        return result == 0;
+    }
 }

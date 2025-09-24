@@ -28,4 +28,32 @@ public class AuthenticationService {
         Files.write(masterHashFile, hashedPassword.getBytes());
         this.currentMasterPassword = masterPassword;
     }
+
+
+    public void changeMasterPassword(String currentPassword, String newPassword) throws Exception {
+        if (!verifyMasterPassword(currentPassword)) {
+            throw new SecurityException("Contraseña maestra actual incorrecta");
+        }
+
+        passwordStorageService.reencryptPasswords(currentPassword, newPassword);
+        setMasterPassword(newPassword);
+    }
+
+    public boolean verifyMasterPassword(String masterPassword) throws Exception {
+        if (!hasMasterPassword()) return false;
+
+        String storedHash = Files.readString(masterHashFile);
+        boolean isValid = cryptoService.verifyPasswordHash(masterPassword, storedHash);
+
+        if (isValid) {
+            this.currentMasterPassword = masterPassword;
+            passwordStorageService.loadPasswords(masterPassword);
+        }
+
+        return isValid;
+    }
+
+    public boolean hasMasterPassword() {
+        return Files.exists(masterHashFile);
+    }
 }

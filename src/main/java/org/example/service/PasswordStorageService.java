@@ -107,4 +107,26 @@ public class PasswordStorageService {
             throw new IllegalStateException("Debe autenticarse primero");
         }
     }
+
+    public void loadPasswords(String masterPassword) throws Exception {
+        if (!Files.exists(passwordsFile)) {
+            passwordList = new ArrayList<>();
+            return;
+        }
+
+        String encryptedData = Files.readString(passwordsFile);
+        String decryptedData = cryptoService.decrypt(encryptedData, masterPassword);
+        passwordList = parsePasswordsFromString(decryptedData);
+        this.currentMasterPassword = masterPassword;
+    }
+
+    public void reencryptPasswords(String currentPassword, String newPassword) throws Exception {
+        List<PasswordEntity> currentPasswords = new ArrayList<>(passwordList);
+        passwordList.clear();
+
+        this.currentMasterPassword = newPassword;
+        for (PasswordEntity entry : currentPasswords) {
+            savePassword(entry);
+        }
+    }
 }
