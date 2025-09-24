@@ -62,4 +62,12 @@ public class PasswordUI {
         System.out.print(prompt);
         return scanner.nextLine();
     }
+
+    public boolean isAuthenticated() {
+        return isAuthenticated;
+    }
+
+    public void setAuthenticated(boolean authenticated) {
+        isAuthenticated = authenticated;
+    }
 }
